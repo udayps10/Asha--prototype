@@ -15,14 +15,17 @@ public record AlertResponse(
         Double longitude,
         Double radiusKm,
         boolean active,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String source,
+        LocalDateTime expiresAt
 ) {
     public static AlertResponse from(Alert alert) {
         return new AlertResponse(
                 alert.getId(), alert.getTitle(), alert.getMessage(), alert.getType(),
                 alert.getSeverity(), alert.getDistrict(), alert.getState(),
                 alert.getLatitude(), alert.getLongitude(), alert.getRadiusKm(),
-                alert.isActive(), alert.getCreatedAt()
+                alert.isActive(), alert.getCreatedAt(),
+                alert.getSource(), alert.getExpiresAt()
         );
     }
 }
