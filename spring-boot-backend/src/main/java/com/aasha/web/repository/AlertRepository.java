@@ -11,4 +11,5 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     List<Alert> findByActiveTrueOrderByCreatedAtDesc();
     List<Alert> findByDistrictAndActiveTrue(String district);
     List<Alert> findByStateAndActiveTrue(String state);
+    boolean existsByExternalId(String externalId);
 }
