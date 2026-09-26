@@ -1,0 +1,4 @@
+ALTER TABLE alerts ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'MANUAL';
+ALTER TABLE alerts ADD COLUMN external_id VARCHAR(64) NULL;
+ALTER TABLE alerts ADD COLUMN expires_at TIMESTAMP NULL;
+CREATE UNIQUE INDEX idx_alerts_external_id ON alerts(external_id);
