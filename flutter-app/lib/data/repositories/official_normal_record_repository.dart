@@ -1,29 +1,32 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../../core/config/api_config.dart';
+import '../../core/utils/authenticated_client.dart';
+import '../../core/config/api_config.dart';
 import '../models/normal_record.dart';
 
 class OfficialNormalRecordRepository {
+  final _client = AuthenticatedClient();
   final String _baseUrl = ApiConfig.matchingBaseUrl;
 
   Future<String> createRecord(NormalRecord record) async {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/api/normal-records'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': record.name,
-        'age': record.age,
-        'photoUrl': record.photoUrl,
-        'campId': record.campId,
-        'campName': record.campName,
-        'officerUid': record.officerUid,
-        'officerName': record.officerName,
-        'officerContact': record.officerContact,
-        'status': record.status.name,
-        'additionalDetails': record.additionalDetails,
-        'foundAt': record.foundAt?.toIso8601String(),
-      }),
-    ).timeout(const Duration(seconds: 15));
+    final response = await _client
+        .post(
+          Uri.parse('$_baseUrl/api/normal-records'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': record.name,
+            'age': record.age,
+            'photoUrl': record.photoUrl,
+            'campId': record.campId,
+            'campName': record.campName,
+            'officerUid': record.officerUid,
+            'officerName': record.officerName,
+            'officerContact': record.officerContact,
+            'status': record.status.name,
+            'additionalDetails': record.additionalDetails,
+            'foundAt': record.foundAt?.toIso8601String(),
+          }),
+        )
+        .timeout(const Duration(seconds: 15));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -33,7 +36,7 @@ class OfficialNormalRecordRepository {
   }
 
   Future<List<NormalRecord>> getRecentRecords() async {
-    final response = await http
+    final response = await _client
         .get(Uri.parse('$_baseUrl/api/normal-records/list'))
         .timeout(const Duration(seconds: 15));
 
@@ -52,7 +55,10 @@ class OfficialNormalRecordRepository {
   }) async {
     final records = await getRecentRecords();
     return records.where((r) {
-      if (name != null && name.isNotEmpty && !r.name.toLowerCase().contains(name.toLowerCase())) return false;
+      if (name != null &&
+          name.isNotEmpty &&
+          !r.name.toLowerCase().contains(name.toLowerCase()))
+        return false;
       if (age != null && r.age != age) return false;
       if (campId != null && r.campId != campId) return false;
       if (status != null && r.status != status) return false;
@@ -61,7 +67,7 @@ class OfficialNormalRecordRepository {
   }
 
   Future<NormalRecord?> getRecordById(String id) async {
-    final response = await http
+    final response = await _client
         .get(Uri.parse('$_baseUrl/api/normal-records/$id'))
         .timeout(const Duration(seconds: 15));
 
@@ -73,10 +79,12 @@ class OfficialNormalRecordRepository {
   }
 
   Future<void> updateStatus(String recordId, NormalRecordStatus status) async {
-    await http.patch(
-      Uri.parse('$_baseUrl/api/normal-records/$recordId/status'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'status': status.name}),
-    ).timeout(const Duration(seconds: 15));
+    await _client
+        .patch(
+          Uri.parse('$_baseUrl/api/normal-records/$recordId/status'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'status': status.name}),
+        )
+        .timeout(const Duration(seconds: 15));
   }
 }
