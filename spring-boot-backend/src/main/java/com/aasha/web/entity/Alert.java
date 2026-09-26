@@ -41,6 +41,15 @@ public class Alert {
     @Column(name = "active")
     private boolean active = true;
 
+    @Column(name = "source", nullable = false, length = 20)
+    private String source = "MANUAL";
+
+    @Column(name = "external_id", unique = true, length = 64)
+    private String externalId;
+
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -71,6 +80,12 @@ public class Alert {
     public void setRadiusKm(Double radiusKm) { this.radiusKm = radiusKm; }
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+    public String getSource() { return source; }
+    public void setSource(String source) { this.source = source; }
+    public String getExternalId() { return externalId; }
+    public void setExternalId(String externalId) { this.externalId = externalId; }
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
