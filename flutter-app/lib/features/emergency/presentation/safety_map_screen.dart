@@ -1,3 +1,4 @@
+import '../../../core/common_widgets/aasha_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -123,49 +124,52 @@ class _SafetyMapScreenState extends State<SafetyMapScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Safety Map')),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadSafetyData,
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-                children: [
-                  _statusCard(disasterResult, nearestCamp),
-                  const SizedBox(height: 16),
-                  if (location != null) ...[
-                    _map(location),
-                    const SizedBox(height: 10),
-                    _legend(),
-                  ],
-                  if (_locationMessage != null) _locationUnavailable(),
-                  if (location != null && _disasters.isEmpty)
-                    _infoCard(
-                      Icons.check_circle_outline,
-                      'No active disaster information',
-                      'No verified active disaster information is available right now.',
-                    ),
-                  if (nearestCamp != null) ...[
+      body: AashaSurface(
+        maxWidth: 1000,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: _loadSafetyData,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+                  children: [
+                    _statusCard(disasterResult, nearestCamp),
                     const SizedBox(height: 16),
-                    _campCard(nearestCamp, location!),
-                  ],
-                  if (location != null && nearestCamp == null) ...[
+                    if (location != null) ...[
+                      _map(location),
+                      const SizedBox(height: 10),
+                      _legend(),
+                    ],
+                    if (_locationMessage != null) _locationUnavailable(),
+                    if (location != null && _disasters.isEmpty)
+                      _infoCard(
+                        Icons.check_circle_outline,
+                        'No active disaster information',
+                        'No verified active disaster information is available right now.',
+                      ),
+                    if (nearestCamp != null) ...[
+                      const SizedBox(height: 16),
+                      _campCard(nearestCamp, location!),
+                    ],
+                    if (location != null && nearestCamp == null) ...[
+                      const SizedBox(height: 16),
+                      _infoCard(
+                        Icons.home_work_outlined,
+                        'No verified safe locations nearby',
+                        'Active camps with geographic coordinates will appear here when available.',
+                      ),
+                    ],
                     const SizedBox(height: 16),
-                    _infoCard(
-                      Icons.home_work_outlined,
-                      'No verified safe locations nearby',
-                      'Active camps with geographic coordinates will appear here when available.',
+                    FilledButton.icon(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/emergency_alerts'),
+                      icon: const Icon(Icons.notifications_active_outlined),
+                      label: const Text('View emergency alerts'),
                     ),
                   ],
-                  const SizedBox(height: 16),
-                  FilledButton.icon(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/emergency_alerts'),
-                    icon: const Icon(Icons.notifications_active_outlined),
-                    label: const Text('View emergency alerts'),
-                  ),
-                ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
