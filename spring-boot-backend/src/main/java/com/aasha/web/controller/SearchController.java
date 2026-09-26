@@ -31,9 +31,9 @@ public class SearchController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("stats", recordService.getStats());
-        model.addAttribute("camps", recordService.getActiveCamps());
+    public String home(Model model, Authentication authentication) {
+        model.addAttribute("signedIn", authentication != null && authentication.isAuthenticated());
+        model.addAttribute("accountName", authentication != null ? authentication.getName() : "");
         return "home";
     }
 
