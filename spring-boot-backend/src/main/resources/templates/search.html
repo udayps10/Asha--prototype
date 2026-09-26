@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Person - Aasha</title>
     <link rel="stylesheet" th:href="@{/css/aasha-design-system.css}">
+    <link rel="stylesheet" th:href="@{/css/aasha-reference.css}">
+    <script defer th:src="@{/js/aasha-reference.js}"></script>
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -15,11 +17,11 @@
                 <div class="header-brand-icon">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
-                <div><span class="header-brand-text">Aasha</span><span class="header-brand-tag">Disaster Response</span></div>
+                <div><span class="header-brand-text">Aasha</span><span class="header-brand-tag">Reunification Network</span></div>
             </a>
             <nav class="header-nav">
                 <a href="/" class="header-link">Home</a>
-                <a href="/search" class="header-link active">Find Person</a>
+                <a href="/search" class="header-link active">Find a Loved One</a>
                 <a href="/camps" class="header-link">Relief Camps</a>
                 <a href="/about" class="header-link">About</a>
             </nav>
@@ -42,21 +44,21 @@
                     <a href="/login" class="btn btn-outline" style="font-size: 13px; padding: 6px 16px;">Login</a>
                 </div>
             </div>
-            <button class="header-toggle" onclick="toggleMobileNav()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            <button class="header-toggle" aria-label="Open navigation" aria-controls="mobileNav" aria-expanded="false" onclick="toggleMobileNav()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
         </div>
     </header>
 
     <main id="main" class="page">
-        <div class="container" style="padding-top: 40px; padding-bottom: 80px;">
-            <div class="mb-10">
-                <span class="section-header-text mb-3" style="display:block;">Search Portal</span>
-                <h1 class="h1">Find a Missing Person</h1>
-                <p style="margin-top: 12px; font-size: 18px; color: var(--ink-sec);">Search relief camp records across India. Results update in real-time.</p>
+        <div class="container search-layout" style="padding-top: 40px; padding-bottom: 80px;">
+            <div class="mb-10 search-intro"><a href="/" class="back-link">← Back to home</a>
+                <span class="section-header-text mb-3" style="display:block;">FIND A LOVED ONE</span>
+                <h1 class="h1">Tell us who you’re looking for.</h1>
+                <p style="margin-top: 12px; font-size: 18px; color: var(--ink-sec);">Every detail can help Aasha compare records from relief camps and response officials.</p>
             </div>
 
             <!-- Search Form -->
-            <form th:action="@{/search}" method="post" enctype="multipart/form-data" class="glass-bright glow-teal" style="padding: 24px; margin-bottom: 32px;">
-                <div class="form-row mb-5">
+            <form th:action="@{/search}" method="post" enctype="multipart/form-data" class="glass-bright glow-teal identity-form" data-search-form style="padding: 24px; margin-bottom: 32px;">
+                <h2 class="form-heading">Add identification details</h2><p class="form-caption">Share as much information as you know.</p><div class="form-row mb-5">
                     <div class="form-group">
                         <label class="form-label" for="name">Full Name *</label>
                         <input type="text" id="name" name="name" class="form-input" placeholder="e.g. Priya Sharma" th:value="${request != null ? request.name : ''}" required>
@@ -95,7 +97,7 @@
                 <div class="empty-state-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <h3 class="empty-state-title">No records found</h3>
+                <h3 class="empty-state-title">No possible matches found</h3>
                 <p class="empty-state-text">Try a different spelling or age range. You can also check critical records below.</p>
                 
                 <!-- Save Search for WhatsApp Notification -->
@@ -145,7 +147,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="result-details">
+                        <details class="person-details"><summary>View person details <span aria-hidden="true">→</span></summary><div class="result-details">
                             <div>
                                 <p class="result-detail-label">CAMP</p>
                                 <p class="result-detail-value" th:text="${record.campName}">-</p>
@@ -162,7 +164,7 @@
                                 <p class="result-detail-label">CONTACT</p>
                                 <p class="result-detail-value" th:text="${record.officerContact}">-</p>
                             </div>
-                        </div>
+                        </div></details>
                     </article>
                 </div>
             </div>
@@ -203,8 +205,8 @@
 
     <div class="mobile-nav" id="mobileNav" onclick="closeMobileNav(event)">
         <div class="mobile-nav-panel" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center"><span style="font-weight:800;font-size:18px;color:white;">Aasha</span><button class="mobile-nav-close" onclick="toggleMobileNav()">&times;</button></div>
-            <nav class="mobile-nav-links"><a href="/">Home</a><a href="/search" class="active">Find Person</a><a href="/camps">Relief Camps</a><a href="/about">About</a></nav>
+            <div class="flex justify-between items-center"><span style="font-weight:800;font-size:18px;color:var(--navy);">Aasha</span><button class="mobile-nav-close" aria-label="Close navigation" onclick="toggleMobileNav()">&times;</button></div>
+            <nav class="mobile-nav-links"><a href="/">Home</a><a href="/search" class="active">Find a Loved One</a><a href="/camps">Relief Camps</a><a href="/about">About</a></nav>
         </div>
     </div>
     <script>
