@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/config/api_config.dart';
+import '../../../../core/utils/authenticated_client.dart';
 import '../models/match_request.dart';
 import '../models/match_response.dart';
 
@@ -21,8 +22,11 @@ abstract interface class MatchApiService {
 
 class HttpMatchApiService implements MatchApiService {
   HttpMatchApiService({http.Client? client, String? baseUrl})
-    : _client = client ?? http.Client(),
-      _baseUrl = (baseUrl ?? ApiConfig.matchingBaseUrl).replaceFirst(RegExp(r'/$'), '') {
+    : _client = AuthenticatedClient(client: client),
+      _baseUrl = (baseUrl ?? ApiConfig.matchingBaseUrl).replaceFirst(
+        RegExp(r'/$'),
+        '',
+      ) {
     if (kDebugMode) {
       debugPrint('[MATCH API] base URL=$_baseUrl');
     }
@@ -70,7 +74,8 @@ class HttpMatchApiService implements MatchApiService {
       if (response.body.trim().isNotEmpty) {
         debugPrint('[MATCH DEBUG] jsonParsingStarted = true');
         final value = jsonDecode(response.body);
-        if (value is! Map) throw const FormatException('Response is not an object');
+        if (value is! Map)
+          throw const FormatException('Response is not an object');
         decoded = Map<String, dynamic>.from(value);
         debugPrint('[MATCH DEBUG] jsonParsingCompleted = true');
       }
@@ -106,7 +111,8 @@ class HttpMatchApiService implements MatchApiService {
       throw MatchApiException(
         statusCode: 0,
         code: 'connection_failed',
-        message: 'Matching service is unavailable. Please check your connection.',
+        message:
+            'Matching service is unavailable. Please check your connection.',
       );
     } on FormatException catch (error, stackTrace) {
       debugPrint('[MATCH DEBUG] exception = FormatException: $error');
@@ -131,7 +137,11 @@ class HttpMatchApiService implements MatchApiService {
 }
 
 class MatchApiException implements Exception {
-  MatchApiException({required this.statusCode, required this.message, this.code});
+  MatchApiException({
+    required this.statusCode,
+    required this.message,
+    this.code,
+  });
 
   final int statusCode;
   final String message;
