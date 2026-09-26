@@ -61,23 +61,24 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/api/**")
             )
             .authorizeHttpRequests(auth -> auth
-                // All citizen pages - public (no login needed)
-                .requestMatchers("/", "/search", "/critical", "/camps", "/about", "/health").permitAll()
+                // Public entry and information pages; response tools require login.
+                .requestMatchers("/", "/about", "/health").permitAll()
+                .requestMatchers("/search", "/search/**", "/critical", "/critical/**", "/camps", "/camps/**").authenticated()
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 // Auth pages
                 .requestMatchers("/login", "/register", "/logout").permitAll()
                 // Public API
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/stats", "/api/camps", "/api/camps/list/**", "/api/normal-records/**", "/api/critical-records/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/stats", "/api/camps", "/api/camps/list/**", "/api/normal-records/**", "/api/critical-records/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/alerts/active").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sos").authenticated()
-                .requestMatchers("/api/normal-records/**", "/api/critical-records/**", "/api/camps/**").permitAll()
+                .requestMatchers("/api/normal-records/**", "/api/critical-records/**", "/api/camps/**").authenticated()
                 // Image upload API
                 .requestMatchers("/api/v1/images/**").permitAll()
                 // Match API
-                .requestMatchers("/api/v1/match/**").permitAll()
-                // Saved search API (citizens save searches without login)
-                .requestMatchers("/api/saved-searches/**").permitAll()
+                .requestMatchers("/api/v1/match", "/api/v1/match/**").authenticated()
+                // Saved searches belong to signed-in citizens
+                .requestMatchers("/api/saved-searches", "/api/saved-searches/**").authenticated()
                 // Webhook for n8n
                 .requestMatchers("/api/webhook/**").permitAll()
                 // All other API requests need auth
@@ -88,10 +89,19 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
+                .usernameParameter("email")
+                .defaultSuccessUrl("/search", false)
                 .failureUrl("/login?error")
                 .permitAll()
             )
+            .exceptionHandling(errors -> errors.authenticationEntryPoint((request, response, exception) -> {
+                if (request.getRequestURI().startsWith(request.getContextPath() + "/api/")) {
+                    response.sendError(401);
+                } else {
+                    new org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint("/login")
+                        .commence(request, response, exception);
+                }
+            }))
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
