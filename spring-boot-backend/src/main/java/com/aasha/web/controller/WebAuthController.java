@@ -23,6 +23,7 @@ public class WebAuthController {
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "error", required = false) String error,
                             @RequestParam(value = "registered", required = false) String registered,
+                            @RequestParam(value = "role", required = false) String role,
                             Model model) {
         if (error != null) {
             model.addAttribute("error", "Invalid email or password");
@@ -30,6 +31,7 @@ public class WebAuthController {
         if (registered != null) {
             model.addAttribute("success", "Account created successfully. Please sign in.");
         }
+        model.addAttribute("officialLogin", "official".equals(role));
         return "login";
     }
 
