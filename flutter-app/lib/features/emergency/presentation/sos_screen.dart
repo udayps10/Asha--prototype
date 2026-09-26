@@ -1,3 +1,5 @@
+import '../../../core/common_widgets/aasha_surface.dart';
+import '../../../core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -73,6 +75,9 @@ class _SosScreenState extends State<SosScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.accentColor,
+            ),
             child: const Text('SEND SOS'),
           ),
         ],
@@ -107,49 +112,97 @@ class _SosScreenState extends State<SosScreen> {
     final submission = _submission;
     return Scaffold(
       appBar: AppBar(title: const Text('Emergency SOS')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Icon(Icons.sos, size: 72, color: Colors.red),
-            const SizedBox(height: 12),
-            Text(
-              submission == null
-                  ? 'Need immediate help?'
-                  : submission.state == SosDeliveryState.submitted
-                  ? 'SOS SENT'
-                  : 'SOS REQUEST SAVED',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              submission?.message ??
-                  'Your current location will be shared with emergency responders after you confirm.',
-              textAlign: TextAlign.center,
-            ),
-            if (_error != null) ...[
-              const SizedBox(height: 16),
+      body: AashaSurface(
+        maxWidth: 560,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(30),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [Color(0xFFFFD9DE), Color(0xFFFFF1F3)],
+                  ),
+                ),
+                child: const CircleAvatar(
+                  radius: 48,
+                  backgroundColor: AppTheme.accentColor,
+                  child: Icon(
+                    Icons.notifications_active_outlined,
+                    size: 48,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               Text(
-                _error!,
+                submission == null
+                    ? 'Need immediate help?'
+                    : submission.state == SosDeliveryState.submitted
+                    ? 'SOS SENT'
+                    : 'SOS REQUEST SAVED',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                submission?.message ??
+                    'Your current location will be shared with emergency responders after you confirm.',
+                textAlign: TextAlign.center,
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 16),
+                Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
+              const SizedBox(height: 28),
+              const Card(
+                child: Padding(
+                  padding: EdgeInsets.all(18),
+                  child: Column(
+                    children: [
+                      AashaBenefit(
+                        Icons.location_on_outlined,
+                        'Share your current location with responders.',
+                      ),
+                      AashaBenefit(
+                        Icons.verified_user_outlined,
+                        'Confirm before sending an emergency request.',
+                      ),
+                      AashaBenefit(
+                        Icons.info_outline,
+                        'Delivery status will appear here after submission.',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.accentColor,
+                ),
+                onPressed: _loading || submission != null ? null : _prepareSos,
+                icon: const Icon(Icons.sos),
+                label: Text(_loading ? 'PREPARING...' : 'SEND SOS'),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'SOS is separate from government emergency alerts.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.blueGrey, fontSize: 12),
               ),
             ],
-            const Spacer(),
-            FilledButton.icon(
-              onPressed: _loading || submission != null ? null : _prepareSos,
-              icon: const Icon(Icons.sos),
-              label: Text(_loading ? 'PREPARING...' : 'SEND SOS'),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'SOS is separate from government emergency alerts.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.blueGrey, fontSize: 12),
-            ),
-          ],
+          ),
         ),
       ),
     );
