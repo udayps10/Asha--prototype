@@ -28,3 +28,19 @@ Thumbs.db
 # Environment
 .env
 *.env.local
+
+# Logs
+*.log
+*_log.txt
+flutter-app/flutter_device_log.txt
+flutter-app/flutter_web_log.txt
+
+# Build / tooling artifacts
+*.hprof
+*.pyc
+spring-boot-backend/out/
+flutter-app/.flutter-plugins
+flutter-app/.flutter-plugins-dependencies
+flutter-app/android/local.properties
+flutter-app/ios/Pods/
+flutter-app/ios/.symlinks/
