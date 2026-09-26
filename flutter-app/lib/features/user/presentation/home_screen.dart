@@ -1,132 +1,198 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_strings.dart';
+import '../../../core/common_widgets/aasha_surface.dart';
 import '../../../core/common_widgets/app_button.dart';
+import '../../../core/theme/app_theme.dart';
 
 class UserHomeScreen extends StatelessWidget {
   const UserHomeScreen({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.appName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () => Navigator.pushNamed(context, '/profile'),
-          ),
-        ],
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Aasha'),
+      actions: [
+        IconButton(
+          tooltip: 'Your account',
+          icon: const Icon(Icons.person_outline),
+          onPressed: () => Navigator.pushNamed(context, '/profile'),
+        ),
+      ],
+    ),
+    drawer: Drawer(
+      child: SafeArea(
+        child: ListView(
+          children: [
+            const Padding(padding: EdgeInsets.all(24), child: AashaBrand()),
+            for (final item in [
+              (Icons.search, 'Find Your Loved One', '/search_form'),
+              (Icons.shield_outlined, 'Emergency Center', '/emergency_center'),
+              (Icons.map_outlined, 'Safety Map', '/safety_map'),
+              (
+                Icons.notifications_outlined,
+                'Emergency Alerts',
+                '/emergency_alerts',
+              ),
+              (Icons.person_outline, 'Your Account', '/profile'),
+            ])
+              ListTile(
+                leading: Icon(item.$1),
+                title: Text(item.$2),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, item.$3);
+                },
+              ),
+          ],
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+    ),
+    body: AashaSurface(
+      maxWidth: 1040,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Find Your Loved One',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.search_outlined,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Provide the details you know. Our system will compare them with verified records from disaster-response officials.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 24),
-                    AppButton(
-                      text: 'Start Search',
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/search_form'),
-                    ),
-                  ],
-                ),
+              'PEOPLE BELONG TOGETHER',
+              style: TextStyle(
+                fontSize: 11,
+                letterSpacing: 1.4,
+                color: AppTheme.secondaryColor,
+                fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 32),
-            Card(
-              color: const Color(0xFFFFF4F1),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
+            const SizedBox(height: 14),
+            const Text(
+              'Find Your Loved One',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -.8,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'A little information can bring you closer.',
+              style: TextStyle(fontSize: 17, color: AppTheme.muted),
+            ),
+            const SizedBox(height: 24),
+            LayoutBuilder(
+              builder: (context, box) {
+                final search = Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
                       children: [
-                        Icon(Icons.shield_outlined, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text(
-                          'Emergency',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        const CircleAvatar(
+                          radius: 46,
+                          backgroundColor: Color(0xFFE6F4FC),
+                          child: Icon(
+                            Icons.person_search_outlined,
+                            size: 54,
+                            color: AppTheme.primaryColor,
                           ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Provide the details you know. Our system will compare them with verified records from disaster-response officials.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(height: 1.6),
+                        ),
+                        const SizedBox(height: 22),
+                        AppButton(
+                          text: 'Start Search  →',
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/search_form'),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    const Text('Safety status, alerts, safe camps, and SOS.'),
-                    const SizedBox(height: 14),
-                    FilledButton.icon(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/emergency_center'),
-                      icon: const Icon(Icons.shield_outlined),
-                      label: const Text('Emergency Center'),
+                  ),
+                );
+                final emergency = Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Icon(
+                          Icons.shield_outlined,
+                          size: 44,
+                          color: AppTheme.secondaryColor,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Here when you need help.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Safety status, verified alerts and nearby safe locations.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(height: 1.6, color: AppTheme.muted),
+                        ),
+                        const SizedBox(height: 20),
+                        FilledButton.icon(
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/emergency_center'),
+                          icon: const Icon(Icons.shield_outlined),
+                          label: const Text('Emergency Center'),
+                        ),
+                        const SizedBox(height: 8),
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppTheme.accentColor,
+                          ),
+                          onPressed: () => Navigator.pushNamed(context, '/sos'),
+                          icon: const Icon(Icons.sos),
+                          label: const Text('Emergency SOS'),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.center,
-                      child: TextButton.icon(
-                        onPressed: () => Navigator.pushNamed(context, '/sos'),
-                        icon: const Icon(Icons.sos),
-                        label: const Text('SEND SOS'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+                return box.maxWidth > 720
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: search),
+                          const SizedBox(width: 20),
+                          Expanded(child: emergency),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          search,
+                          const SizedBox(height: 12),
+                          emergency,
+                        ],
+                      );
+              },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
             const Text(
               'How it works',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 16),
-            _buildStep(Icons.edit, 'Fill in the missing person details.'),
-            _buildStep(
-              Icons.auto_awesome,
-              'Our AI system analyzes verified records.',
+            const SizedBox(height: 10),
+            const AashaBenefit(
+              Icons.edit_outlined,
+              'Share the details you know.',
             ),
-            _buildStep(
-              Icons.contact_phone,
-              'Connect with officials if a match is found.',
+            const AashaBenefit(
+              Icons.manage_search,
+              'Compare with verified response records.',
+            ),
+            const AashaBenefit(
+              Icons.contact_phone_outlined,
+              'Contact officials to confirm a possible match.',
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildStep(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        children: [
-          Icon(icon, size: 24, color: Colors.blueGrey),
-          const SizedBox(width: 16),
-          Expanded(child: Text(text)),
-        ],
-      ),
-    );
-  }
+    ),
+  );
 }
