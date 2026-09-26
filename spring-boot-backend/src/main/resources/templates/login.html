@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Aasha</title>
     <link rel="stylesheet" th:href="@{/css/aasha-design-system.css}">
+    <link rel="stylesheet" th:href="@{/css/aasha-reference.css}">
+    <script defer th:src="@{/js/aasha-reference.js}"></script>
 </head>
 <body>
     <header class="header">
@@ -18,7 +20,7 @@
                 </div>
                 <div>
                     <span class="header-brand-text">Aasha</span>
-                    <span class="header-brand-tag">Disaster Response</span>
+                    <span class="header-brand-tag">Reunification Network</span>
                 </div>
             </a>
         </div>
@@ -27,7 +29,7 @@
     <main class="container" style="max-width: 480px; margin-top: 80px; padding: 0 24px;">
         <div class="glass-bright" style="padding: 40px; border-radius: 20px;">
             <h1 style="font-family: var(--font-display); font-size: 28px; font-weight: 800; margin-bottom: 8px; text-align: center;">
-                Welcome Back
+                <span th:text="${officialLogin == true ? 'Official Login' : 'Welcome Back'}">Welcome Back</span>
             </h1>
             <p style="color: var(--ink-sec); text-align: center; margin-bottom: 32px;">
                 Sign in to access Aasha disaster response platform
