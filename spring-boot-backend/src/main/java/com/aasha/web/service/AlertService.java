@@ -6,6 +6,7 @@ import com.aasha.web.entity.Alert;
 import com.aasha.web.repository.AlertRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Comparator;
 
@@ -18,8 +19,11 @@ public class AlertService {
     }
 
     public List<AlertResponse> activeAlerts() {
+        LocalDateTime now = LocalDateTime.now();
         return repository.findByActiveTrueOrderByCreatedAtDesc()
-                .stream().map(AlertResponse::from).toList();
+                .stream()
+                .filter(a -> a.getExpiresAt() == null || a.getExpiresAt().isAfter(now))
+                .map(AlertResponse::from).toList();
     }
 
     public List<AlertResponse> allAlerts() {
