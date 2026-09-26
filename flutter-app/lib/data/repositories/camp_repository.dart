@@ -1,30 +1,33 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../../core/config/api_config.dart';
+import '../../core/utils/authenticated_client.dart';
+import '../../core/config/api_config.dart';
 import '../models/camp.dart';
 
 class CampRepository {
+  final _client = AuthenticatedClient();
   final String _baseUrl = ApiConfig.matchingBaseUrl;
 
   Future<void> createCamp(Camp camp) async {
-    await http.post(
-      Uri.parse('$_baseUrl/api/camps'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': camp.name,
-        'locationName': camp.locationName,
-        'latitude': camp.latitude,
-        'longitude': camp.longitude,
-        'contactNumber': camp.contactNumber,
-        'officerName': camp.officerName,
-        'officerUid': camp.officerUid,
-        'active': camp.active,
-      }),
-    ).timeout(const Duration(seconds: 15));
+    await _client
+        .post(
+          Uri.parse('$_baseUrl/api/camps'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': camp.name,
+            'locationName': camp.locationName,
+            'latitude': camp.latitude,
+            'longitude': camp.longitude,
+            'contactNumber': camp.contactNumber,
+            'officerName': camp.officerName,
+            'officerUid': camp.officerUid,
+            'active': camp.active,
+          }),
+        )
+        .timeout(const Duration(seconds: 15));
   }
 
   Future<List<Camp>> getActiveCamps() async {
-    final response = await http
+    final response = await _client
         .get(Uri.parse('$_baseUrl/api/camps'))
         .timeout(const Duration(seconds: 15));
 
@@ -36,7 +39,7 @@ class CampRepository {
   }
 
   Future<List<Camp>> getAllCamps() async {
-    final response = await http
+    final response = await _client
         .get(Uri.parse('$_baseUrl/api/camps'))
         .timeout(const Duration(seconds: 15));
 
@@ -57,19 +60,21 @@ class CampRepository {
   }
 
   Future<void> updateCamp(Camp camp) async {
-    await http.put(
-      Uri.parse('$_baseUrl/api/camps/${camp.id}'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': camp.name,
-        'locationName': camp.locationName,
-        'latitude': camp.latitude,
-        'longitude': camp.longitude,
-        'contactNumber': camp.contactNumber,
-        'officerName': camp.officerName,
-        'officerUid': camp.officerUid,
-        'active': camp.active,
-      }),
-    ).timeout(const Duration(seconds: 15));
+    await _client
+        .put(
+          Uri.parse('$_baseUrl/api/camps/${camp.id}'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': camp.name,
+            'locationName': camp.locationName,
+            'latitude': camp.latitude,
+            'longitude': camp.longitude,
+            'contactNumber': camp.contactNumber,
+            'officerName': camp.officerName,
+            'officerUid': camp.officerUid,
+            'active': camp.active,
+          }),
+        )
+        .timeout(const Duration(seconds: 15));
   }
 }
