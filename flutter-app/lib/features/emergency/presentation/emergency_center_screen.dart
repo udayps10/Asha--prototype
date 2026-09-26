@@ -1,3 +1,4 @@
+import '../../../core/common_widgets/aasha_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -151,42 +152,44 @@ class _EmergencyCenterScreenState extends State<EmergencyCenterScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Emergency Center')),
-      body: SafeArea(
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _load,
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-                  children: [
-                    _connectionBanner(sync),
-                    _statusCard(disaster, camp),
-                    if (_locationMessage != null) ...[
-                      const SizedBox(height: 12),
-                      _infoCard(
-                        Icons.location_off_outlined,
-                        'Location unavailable',
-                        'Safety distance and geographic relevance cannot be calculated.',
-                      ),
+      body: AashaSurface(
+        child: SafeArea(
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  onRefresh: _load,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+                    children: [
+                      _connectionBanner(sync),
+                      _statusCard(disaster, camp),
+                      if (_locationMessage != null) ...[
+                        const SizedBox(height: 12),
+                        _infoCard(
+                          Icons.location_off_outlined,
+                          'Location unavailable',
+                          'Safety distance and geographic relevance cannot be calculated.',
+                        ),
+                      ],
+                      if (_errorMessage != null &&
+                          !_repository.lastFetchUsedCache) ...[
+                        const SizedBox(height: 12),
+                        _infoCard(
+                          Icons.error_outline,
+                          'Emergency information unavailable',
+                          _errorMessage!,
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      _alertsSection(),
+                      const SizedBox(height: 20),
+                      _campSection(camp),
+                      const SizedBox(height: 20),
+                      _actionsSection(),
                     ],
-                    if (_errorMessage != null &&
-                        !_repository.lastFetchUsedCache) ...[
-                      const SizedBox(height: 12),
-                      _infoCard(
-                        Icons.error_outline,
-                        'Emergency information unavailable',
-                        _errorMessage!,
-                      ),
-                    ],
-                    const SizedBox(height: 20),
-                    _alertsSection(),
-                    const SizedBox(height: 20),
-                    _campSection(camp),
-                    const SizedBox(height: 20),
-                    _actionsSection(),
-                  ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }
@@ -246,6 +249,14 @@ class _EmergencyCenterScreenState extends State<EmergencyCenterScreen> {
             ),
             const SizedBox(height: 8),
             Text(_statusDescription(zone)),
+            if (_location == null) ...[
+              const SizedBox(height: 14),
+              FilledButton.icon(
+                onPressed: _load,
+                icon: const Icon(Icons.my_location),
+                label: const Text('Enable Location'),
+              ),
+            ],
             if (disaster != null) ...[
               const SizedBox(height: 14),
               Text(
